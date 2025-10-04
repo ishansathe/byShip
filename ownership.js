@@ -17,6 +17,7 @@ let Line = {
     threshold: null,
     bending: false,
     bendDirection: null,
+    bendCounter: 0
 }
 
 function drawLine(x1, y1, x2, y2) {
@@ -56,6 +57,9 @@ function bendLine(x1, y1, x2, y2) {
 }
 
 
+
+
+
 let x1, y1, x2, y2;
 
 
@@ -63,6 +67,7 @@ setInterval(() => {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     setColor();
 
+    // offScreen();
 
     switch (Line.direction) {
         case 'right':
@@ -126,13 +131,17 @@ setInterval(() => {
                 y1 += 1;
                 y2 += 1;
             }
+            break;
 
         case 'up':
             if (Line.bending == false){
                 drawLine(x1, y1, x2, y2);
                 y1 -= 1;
                 y2 -= 1;
+                console.log("Currently drawing down.", y1, y2)
             }
+            break;
+
         default:
             break;
     }
