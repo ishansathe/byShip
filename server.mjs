@@ -8,9 +8,18 @@ const PORT = 5194;
 
 app.use(express.static('./src/entry_files'))
 app.use(express.static('./src/registration_files'))
+app.use(express.static('./src/confirmation_files'))
 
 app.get('/', (req, res) => {
     res.send(fs.readFileSync('./src/entry_files/entry.html', 'utf-8'));
+})
+
+app.get('/register', (req, res) => {
+    res.send(fs.readFileSync('./src/registration_files/register.html', 'utf-8'));
+})
+
+app.get('/await_confirm', (req, res) => {
+    res.send(fs.readFileSync('./src/confirmation_files/waiting_confirmation.html', 'utf-8'));
 })
 
 app.listen(PORT, () => {

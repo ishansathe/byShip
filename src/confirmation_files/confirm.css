@@ -1,0 +1,11 @@
+div{
+    margin: auto;
+    text-align: center;
+
+    /* This works for children elements */
+    align-items: center;
+
+        
+    width: 50vw;
+    font-size: 2rem;
+}
