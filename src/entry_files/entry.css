@@ -1,0 +1,20 @@
+
+/* div {
+    padding: 5rem;
+    background-color: green;
+} */
+
+#main_text{
+    padding: 5rem;
+}
+
+h1, h3{
+    text-align: center;
+}
+
+#buttonOptions{
+    display: flex;
+}
+button{
+    margin: auto;
+}
