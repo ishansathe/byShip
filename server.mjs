@@ -5,7 +5,7 @@ const app = express();
 const PORT = 5194;
 // const entryFile = fs.readFileSync('./src/entry_files/entry.html', 'utf-8');
 
-app.use(express.static('./src'))
+app.use(express.static('./public'))
 
 app.get('/', (req, res) => {
     res.send(fs.readFileSync('./src/landingPage.html', 'utf-8'));
