@@ -8,7 +8,8 @@ const PORT = 5194;
 app.use(express.static('./public'))
 
 app.get('/', (req, res) => {
-    res.send(fs.readFileSync('./src/landingPage.html', 'utf-8'));
+    // The name was landingPage, but got changed to 'index' for vercel issues.
+    res.send(fs.readFileSync('./src/index.html', 'utf-8'));
 })
 
 app.listen(PORT, () => {
