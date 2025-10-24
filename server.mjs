@@ -7,7 +7,7 @@ const PORT = 5194;
 
 // app.use(express.static('./public'))
 
-app.get('/', (req, res) => {
+app.get('/api', (req, res) => {
     // The name was landingPage, but got changed to 'index' for vercel issues.
     // res.json({ message: 'Hello from Express on Vercel!' });
     // res.send(fs.readFileSync('/public/index.html', 'utf-8'));
