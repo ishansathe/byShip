@@ -12,6 +12,8 @@ app.get('/', (req, res) => {
     res.send(fs.readFileSync('./src/index.html', 'utf-8'));
 })
 
-app.listen(PORT, () => {
-    console.log(`Now listening for ByShip traffic at port ${PORT}`)
-})
+// app.listen(PORT, () => {
+//     console.log(`Now listening for ByShip traffic at port ${PORT}`)
+// })
+
+export default app;
