@@ -22,7 +22,6 @@ app.get('/api', (req, res) => {
         }
         newJsonArray.push(object)
     }
-
     res.json(JSON.stringify(newJsonArray))
 })
 
