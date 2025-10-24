@@ -5,11 +5,11 @@ const app = express();
 const PORT = 5194;
 // const entryFile = fs.readFileSync('./src/entry_files/entry.html', 'utf-8');
 
-app.use(express.static('./public'))
+// app.use(express.static('./public'))
 
 app.get('/', (req, res) => {
     // The name was landingPage, but got changed to 'index' for vercel issues.
-    res.send(fs.readFileSync('/public/index.html', 'utf-8'));
+    res.send(fs.readFileSync('/index.html', 'utf-8'));
 })
 
 // app.listen(PORT, () => {
