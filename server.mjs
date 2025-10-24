@@ -4,8 +4,6 @@ import fs from 'fs';
 const app = express();
 const PORT = 5194;
 
-console.log(fs.readdirSync("/"));
-
 // const entryFile = fs.readFileSync('./src/entry_files/entry.html', 'utf-8');
 
 // app.use(express.static('./public'))
