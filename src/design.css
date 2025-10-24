@@ -1,0 +1,54 @@
+body {
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    background: #3b82f6;
+    min-height: 100vh;
+}
+canvas {
+    position: absolute;
+    z-index: -1;
+    top: 0;
+    left: 0;
+}
+
+#center-message{
+    height: 30vh;
+    width: 50vw;
+    /* background-color: #4187f7; */
+    background-color: rgba(238, 244, 252, 0.5);
+    backdrop-filter: blur(4px);
+    margin-top: 31vh;
+    margin-inline: auto;
+    text-align: center;
+    border: 3px white solid;
+    box-shadow: 2px 2px 12px white;  
+    border-radius: 10vh;
+}
+
+
+#company-title{
+    position: relative;
+    top: 40px;
+    color: white;
+    font-size: 50px;
+    font-family: 'Arial Rounded MT';
+    font-weight: 700;
+}
+
+#subtext{
+    position: relative;
+    top: 65px;
+    color: white;
+    font-size: 25px;
+    font-family: 'Arial Rounded MT';
+}
+
+#coming-soon{
+    color: white;
+    position: relative;
+    top: 20px;
+    text-align: center;
+    font-family: 'Arial Rounded MT';
+    font-size: 35px;
+}
