@@ -2,7 +2,7 @@
     #center-message{
         width: 60vw;
         height: 33vh;
-        margin-top: 25vh;
+        margin-top: 20vh;
         text-shadow: 2px 2px 2px #042c6b;
     }
     #coming-soon{
@@ -15,6 +15,6 @@
     #center-message{
         width: 60vw;
         height: 30vh;
-        margin-top: 25vh;
+        margin-top: 20vh;
     }
 }
