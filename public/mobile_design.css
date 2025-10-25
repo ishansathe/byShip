@@ -3,15 +3,11 @@
         width: 60vw;
         height: 33vh;
         margin-top: 30vh;
-        text-shadow: 2px 2px 4px black;
+        text-shadow: 2px 2px 2px #3b82f6;
     }
-    #company-title{
-        color: white;
-    }
-
     #coming-soon{
         top: 50px;
-        text-shadow: 2px 2px 4px blue;
+        text-shadow: 2px 2px 4px #3b82f6;
     }
 }
 
@@ -19,15 +15,6 @@
     #center-message{
         width: 60vw;
         height: 30vh;
-        margin-top: 30vh;
-        text-shadow: 2px 2px 4px black;
-    }
-    #company-title{
-        color: white;
-    }
-
-    #coming-soon{
-        top: 50px;
-        text-shadow: 2px 2px 4px blue;
+        margin-top: 25vh;
     }
 }
