@@ -1,0 +1,33 @@
+@media (max-width:900px) {
+    #center-message{
+        width: 60vw;
+        height: 33vh;
+        margin-top: 30vh;
+        text-shadow: 2px 2px 4px black;
+    }
+    #company-title{
+        color: white;
+    }
+
+    #coming-soon{
+        top: 50px;
+        text-shadow: 2px 2px 4px blue;
+    }
+}
+
+@media (max-width:900px) and (min-height: 900px) {
+    #center-message{
+        width: 60vw;
+        height: 30vh;
+        margin-top: 30vh;
+        text-shadow: 2px 2px 4px black;
+    }
+    #company-title{
+        color: white;
+    }
+
+    #coming-soon{
+        top: 50px;
+        text-shadow: 2px 2px 4px blue;
+    }
+}

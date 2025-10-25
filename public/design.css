@@ -24,12 +24,13 @@ canvas {
     border: 3px white solid;
     box-shadow: 2px 2px 12px white;  
     border-radius: 10vh;
+    text-shadow: 2px 2px 4px gray;
 }
 
 
 #company-title{
     position: relative;
-    top: 40px;
+    top: 30px;
     color: white;
     font-size: 50px;
     font-family: 'Arial Rounded MT';
@@ -38,7 +39,7 @@ canvas {
 
 #subtext{
     position: relative;
-    top: 65px;
+    top: 55px;
     color: white;
     font-size: 25px;
     font-family: 'Arial Rounded MT';
@@ -51,4 +52,5 @@ canvas {
     text-align: center;
     font-family: 'Arial Rounded MT';
     font-size: 35px;
+    text-shadow: 2px 2px 4px #3b82f6;
 }
