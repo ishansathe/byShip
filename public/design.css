@@ -2,7 +2,7 @@ body {
     margin: 0;
     padding: 0;
     overflow: hidden;
-    background: #3b82f6;
+    background: black;
     min-height: 100vh;
 }
 canvas {
