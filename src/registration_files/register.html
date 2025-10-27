@@ -16,13 +16,21 @@
             <label for="password">Enter password</label>
             <input type="password" name="password" id="password" required>
 
-            <label for="location">Enter your location</label>
-            <input type="text" name="location" id="location" required>
-
             <label for="contact">Enter contact number</label>
             <input type="number" name="contact" id="contact" required>
 
-            <button>Submit</button>
+            <label for="user_type">Type of User:</label>
+            <select name="user_type" id="user_type" required>
+                <option value="buyer">buyer</option>
+                <option value="seller">seller</option>
+            </select>
+
+            <!-- <button type="submit">Submit</button> -->
+             <input type="submit" value="Submit">
         </form>
+
+        <!-- Script is kept at the end so that elements can be altered after they are already loaded. -->
+        <script src="preset_type.js"></script>
+
     </body>
 </html>
