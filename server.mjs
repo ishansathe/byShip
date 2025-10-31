@@ -2,13 +2,16 @@ import express from 'express';
 import fs from 'fs';
 import mysql from 'mysql2';
 import formidable from 'formidable';
-import crypto from 'crypto';
+import {randomBytes, createHash} from 'crypto';
 import nodemailer from 'nodemailer';
 import cookieparser from 'cookie-parser';
 
 
 import { configDotenv } from "dotenv";
 configDotenv();
+
+
+let hash = createHash('sha256');
 
 let zepto_mail_url = process.env.zepto_mail_url;
 let zepto_token = process.env.zepto_mail_token_api_key;
@@ -81,7 +84,8 @@ app.post('/await_confirm', (req, res) => {
         console.log(fields.name[0]);
         
         // Stored it here because I will need it again later.
-        let reg_key = crypto.randomBytes(24).toString('hex');
+        // Taken from the crypto library!
+        let reg_key = randomBytes(24).toString('hex');
 
         connection.query(
             "insert into user (name, email, number, password, user_type, confirmed, reg_key, reg_time) values" +
@@ -110,6 +114,8 @@ app.post('/await_confirm', (req, res) => {
             subject: "Please confirm your registration.",
             // html: "Your registration URL is: <br>",
             text: `http://localhost:5194/confirmation?reg_key=${reg_key}
+
+            After registration is confirmed, you will be redirected to the login page, where you have to login again.
             
             Note, this link expires after two hours, after which you will have to log in again.`
         }
@@ -125,6 +131,7 @@ app.post('/await_confirm', (req, res) => {
             }
         })
 
+        res.cookie('email', fields.email[0]);
         res.send(fs.readFileSync('./src/confirmation_files/waiting_confirmation.html', 'utf-8'));
     })
 })
@@ -152,11 +159,7 @@ app.get('/confirmation', (req,res) => {
 
                         // I don't think a callback is needed for this one.
                         connection.query(`update user set confirmed = 1 where reg_key = '${url_key}'`)
-                        res.cookie("ssid", "1234", {
-                            path: '/home',
-                            expires: new Date(Date.now() + 7200000),
-                        })
-                        res.redirect('/home');
+                        res.redirect('/login');
                     }
                     // If you have registered too long ago, where timestamp is now lesser than two hour limit allows
                     // You have to re-register.
@@ -171,10 +174,50 @@ app.get('/confirmation', (req,res) => {
     )
 })
 
+// This is for post request when function comes from login page.
+app.post('/home', (req, res) => {
+    console.log(req.cookies);
+
+    formidable().parse(req, (err, fields, files) => {
+        if(err) {
+            console.log(err);
+        }
+        console.log(fields.email[0])
+
+        let emailId = fields.email[0];
+        let password = fields.password[0];
+
+        connection.query(`select confirmed from user where email = "${emailId}"`,
+            (err, result) => {
+                if(err) {
+                    console.log(err);
+                }
+                // result is always returned as an array of values.
+                if(result[0].confirmed == 1) {
+
+                    let hash = createHash('sha256');
+                    hash.update(password);
+                    hash.update(Math.random().toString());
+                    res.cookie('sess_id', hash.digest(), {
+                        path: '/home'
+                    })
+                }
+                console.log(result[0].confirmed);
+                res.send(fs.readFileSync('./src/sample.html','utf-8'))
+            }
+        )
+    })
+})
+
+app.post('/resend-email', (req, res) => {
+
+})
+
 app.get('/home', (req, res) => {
     console.log(req.cookies);
-    res.send(fs.readFileSync('./src/sample.html','utf-8'))
+    res.send(fs.readFileSync('./src/sample.html','utf-8'));
 })
+
 
 app.get('/login', (req, res) => {
     res.send(fs.readFileSync('./src/login_files/login.html', 'utf-8'))
