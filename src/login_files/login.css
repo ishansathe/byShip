@@ -1,0 +1,20 @@
+#center-panel{
+    width: 50vw;
+    margin-left: 25vw;
+    background-color: lightblue;
+    text-align: center;
+}
+
+form table{
+    text-align: center;
+    width: 25vw;
+    margin-left: 12.5vw;
+}
+
+tr .labels{
+    width: 7vw;;
+}
+
+tr input {
+    width: 18vw;;
+}

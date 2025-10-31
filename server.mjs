@@ -60,6 +60,7 @@ app.use(cookieparser());
 app.use(express.static('./src/entry_files'))
 app.use(express.static('./src/registration_files'))
 app.use(express.static('./src/confirmation_files'))
+app.use(express.static('./src/login_files'))
 
 app.get('/', (req, res) => {
     res.send(fs.readFileSync('./src/entry_files/entry.html', 'utf-8'));
@@ -173,6 +174,10 @@ app.get('/confirmation', (req,res) => {
 app.get('/home', (req, res) => {
     console.log(req.cookies);
     res.send(fs.readFileSync('./src/sample.html','utf-8'))
+})
+
+app.get('/login', (req, res) => {
+    res.send(fs.readFileSync('./src/login_files/login.html', 'utf-8'))
 })
 
 app.listen(PORT, () => {
