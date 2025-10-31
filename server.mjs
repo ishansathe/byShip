@@ -3,7 +3,9 @@ import fs from 'fs';
 import mysql from 'mysql2';
 import formidable from 'formidable';
 import crypto from 'crypto';
-import { SendMailClient } from 'zeptomail';
+import nodemailer from 'nodemailer';
+import cookieparser from 'cookie-parser';
+
 
 import { configDotenv } from "dotenv";
 configDotenv();
@@ -11,7 +13,16 @@ configDotenv();
 let zepto_mail_url = process.env.zepto_mail_url;
 let zepto_token = process.env.zepto_mail_token_api_key;
 
-let client = new SendMailClient({zepto_mail_url, zepto_token})
+let transport = nodemailer.createTransport({
+    host: "smtp.zeptomail.in",
+    port: 587,
+    auth: {
+        user: process.env.zepto_smtp_username,
+        pass: process.env.zepto_smtp_password
+    }
+})
+
+
 
 const connection = mysql.createConnection({
     host:'localhost',
@@ -43,6 +54,8 @@ connection.connect((err)=> {
 const app = express();
 const PORT = 5194;
 // const entryFile = fs.readFileSync('./src/entry_files/entry.html', 'utf-8');
+
+app.use(cookieparser());
 
 app.use(express.static('./src/entry_files'))
 app.use(express.static('./src/registration_files'))
@@ -90,8 +103,76 @@ app.post('/await_confirm', (req, res) => {
             }
         );
 
+        let mailOptions = {
+            from: '"Byship Team" <byship-team@byship.in>',
+            to: `${fields.email[0]}`,
+            subject: "Please confirm your registration.",
+            // html: "Your registration URL is: <br>",
+            text: `http://localhost:5194/confirmation?reg_key=${reg_key}
+            
+            Note, this link expires after two hours, after which you will have to log in again.`
+        }
+
+        transport.sendMail(mailOptions, (err, infor) => {
+            if(err){
+                return console.error(err);
+            }
+            else 
+            {
+                console.log("Email Sent successfully.");
+                console.log("Here is info: ", infor);
+            }
+        })
+
         res.send(fs.readFileSync('./src/confirmation_files/waiting_confirmation.html', 'utf-8'));
     })
+})
+
+app.get('/confirmation', (req,res) => {
+    let url_key = req.query.reg_key
+    
+    let reg_success = false;
+    console.log(url_key);
+    connection.query('select reg_key, reg_time from user', 
+        (err, result) => {
+            if(err){
+                console.log(err);
+            }
+        
+            for (let i in result) {
+
+                if (result[i].reg_key == url_key) {
+                    console.log("Good stuff.")
+
+                    // If you have register within the timelimit. You are good to go!
+                    // 7200 = 2 hours (in seconds) = 7200000 (in milliseconds)
+                    if(result[i].reg_time > ( Date.now() - 7200000)) {
+                        console.log("Link is valid! Registration complete!");
+
+                        // I don't think a callback is needed for this one.
+                        connection.query(`update user set confirmed = 1 where reg_key = '${url_key}'`)
+                        res.cookie("ssid", "1234", {
+                            path: '/home',
+                            expires: new Date(Date.now() + 7200000),
+                        })
+                        res.redirect('/home');
+                    }
+                    // If you have registered too long ago, where timestamp is now lesser than two hour limit allows
+                    // You have to re-register.
+                    else {
+                        console.log("Link has now expired. You need to re-register.");
+                        res.redirect('/register')
+                    }
+                    return;
+                }
+            }
+        }
+    )
+})
+
+app.get('/home', (req, res) => {
+    console.log(req.cookies);
+    res.send(fs.readFileSync('./src/sample.html','utf-8'))
 })
 
 app.listen(PORT, () => {

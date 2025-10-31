@@ -18,11 +18,11 @@ const msg = {
     html: '<u>you can also add <strong>html</strong> code if you want to.</u>'
 };
 
-// MailService
-//     .send(msg)
-//     .then(() => {
-//         console.log("Sent the email!");
-//     })
-//     .catch((err) => {
-//         console.error(err);
-//     })
+MailService
+    .send(msg)
+    .then(() => {
+        console.log("Sent the email!");
+    })
+    .catch((err) => {
+        console.error(err);
+    })
