@@ -43,15 +43,6 @@ connection.connect((err)=> {
     console.log("Connection to MySQL database was successful. ID is: ", connection.threadId);
 })
 
-// connection.query('select * from user', 
-//     // Calls this function when a response is to be received from database.
-//     (err, results, fields) => {
-//         if(err){
-//             console.error("Error when performing the query:", err);
-//             return;
-//         }
-//         console.log('Results of query', results);
-// });
 
 
 const app = express();
@@ -64,6 +55,9 @@ app.use(express.static('./src/entry_files'))
 app.use(express.static('./src/registration_files'))
 app.use(express.static('./src/confirmation_files'))
 app.use(express.static('./src/login_files'))
+
+app.set('view engine', 'ejs')
+app.set('views', './src/login_files')
 
 app.get('/', (req, res) => {
     res.send(fs.readFileSync('./src/entry_files/entry.html', 'utf-8'));
@@ -201,9 +195,9 @@ app.post('/home', (req, res) => {
                     res.cookie('sess_id', hash.digest(), {
                         path: '/home'
                     })
+                    res.send(fs.readFileSync('./src/sample.html','utf-8'))
                 }
                 console.log(result[0].confirmed);
-                res.send(fs.readFileSync('./src/sample.html','utf-8'))
             }
         )
     })
@@ -220,7 +214,21 @@ app.get('/home', (req, res) => {
 
 
 app.get('/login', (req, res) => {
-    res.send(fs.readFileSync('./src/login_files/login.html', 'utf-8'))
+    console.log(req.query)
+    if(req.query.stat1 = 'false') {
+        res.render('login', {existence_error : "No such user exists.", password_error: ""})
+        return;
+    }
+
+    if(req.query.stat2 == 'false') {
+        res.render('login', {existence_error : "", password_error: "Invalid Password."})
+        return;
+    }
+
+    res.render('login', {
+        existence_error: "",
+        password_error: ""
+    })
 })
 
 app.listen(PORT, () => {

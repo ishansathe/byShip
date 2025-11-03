@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Log into your account.</title>
+        <link rel="stylesheet" href="login.css">
+    </head>
+    <body>
+        <div id="center-panel">
+            <h1>Login to your Byship Account.</h1>
+            <form action="/home" method="post">
+                <table>
+                    <tr>
+                        <td class="labels">Email</td>
+                        <td class="inputs"><input type="email" name="email" id="email" required></td>
+                    </tr> 
+                    <tr>
+                        <td class="labels">Password</td>
+                        <td class="inputs"><input type="password" name="password" id="password" required></td>
+                    </tr> 
+                    <div class="errors"><%= password_error; %></div>
+                </table>
+            
+                <button>Submit</button>
+            </form>
+            <div class="errors"><%= existence_error; %></div>
+        </div>
+        
+    </body>
+</html>

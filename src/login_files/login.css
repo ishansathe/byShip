@@ -18,3 +18,7 @@ tr .labels{
 tr input {
     width: 18vw;;
 }
+
+.errors{
+    color: red;
+}
