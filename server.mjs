@@ -180,8 +180,9 @@ app.post('/home', (req, res) => {
 
         let emailId = fields.email[0];
         let password = fields.password[0];
+        let user_type = fields.acc_type[0];
 
-        connection.query(`select confirmed from user where email = "${emailId}" and password = "${password}"`,
+        connection.query(`select confirmed from user where email = "${emailId}" and password = "${password}" and user_type = "${user_type}"`,
             (err, result) => {
                 if(err) {
                     console.log(err);
@@ -239,7 +240,7 @@ app.get('/home', (req, res) => {
 app.get('/login', (req, res) => {
     console.log(req.query)
     if(req.query.code == '1') {
-        res.render('login', {existence_error : "Invalid Username or Password or both."})
+        res.render('login', {existence_error : "Invalid Username, Password, Type or all."})
         return;
     }
 

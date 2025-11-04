@@ -8,6 +8,13 @@
         <div id="center-panel">
             <h1>Login to your Byship Account.</h1>
             <form action="/home" method="post">
+                <div id="divider" style="margin: 1rem;">
+                    <label for="acc_type" style="margin: 0.5rem;">as: </label>
+                    <select name="acc_type" id="acc_type">
+                        <option value="buyer">Buyer</option>
+                        <option value="seller">Seller</option>
+                    </select>
+                </div>
                 <table>
                     <tr>
                         <td class="labels">Email</td>
