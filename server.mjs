@@ -230,10 +230,6 @@ app.post('/home', (req, res) => {
     })
 })
 
-app.post('/resend-email', (req, res) => {
-
-})
-
 app.get('/home', (req, res) => {
     console.log(req.cookies);
     res.send(fs.readFileSync('./src/sample.html','utf-8'));
