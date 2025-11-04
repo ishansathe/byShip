@@ -11,12 +11,15 @@ const connection = mysql.createConnection({
 })
 
 
-connection.query('select reg_key, reg_time from user', 
+connection.query('select confirmed from user where email="ishansatheprofessional@gmail.com" and password="sasdasfsad" OR 1=1";', 
     (err, result) => {
         if(err){
-            console.log(err);
+            console.log(err.code);
         }
-        console.log(result);
+        // if(result == []){
+
+        // }
+        console.log(result)
     }
 )
 

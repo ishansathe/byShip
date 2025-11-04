@@ -181,12 +181,33 @@ app.post('/home', (req, res) => {
         let emailId = fields.email[0];
         let password = fields.password[0];
 
-        connection.query(`select confirmed from user where email = "${emailId}"`,
+        connection.query(`select confirmed from user where email = "${emailId}" and password = "${password}"`,
             (err, result) => {
                 if(err) {
                     console.log(err);
+
+                    // Malicious input.
+                    if(err.code == "ER_PARSE_ERROR"){
+                        res.redirect('/login?code=3')
+                        return;
+                    }
                 }
-                // result is always returned as an array of values.
+
+                /* Result always comes in the form of array of objects */
+
+                // User does not exist
+                    // The choice of this condition is due to behaviour of javascript.
+                    // It sees result as an object which actually contains an array of objects.
+                    // So that's why it's not possible to directly check if its an empty array, because its an object.
+                    // But it's possible to check its length.
+                if(result.length == 0 ){
+                    res.redirect('/login?code=1')
+                    console.log("works")
+
+                    return;
+                }
+                
+                // User exists.
                 if(result[0].confirmed == 1) {
 
                     let hash = createHash('sha256');
@@ -196,8 +217,14 @@ app.post('/home', (req, res) => {
                         path: '/home'
                     })
                     res.send(fs.readFileSync('./src/sample.html','utf-8'))
+                    return;
                 }
-                console.log(result[0].confirmed);
+
+                // registration not confirmed
+                if(result[0].confirmed == 0) {
+                    res.redirect('/login?code=2')
+                    return;
+                }
             }
         )
     })
@@ -215,19 +242,23 @@ app.get('/home', (req, res) => {
 
 app.get('/login', (req, res) => {
     console.log(req.query)
-    if(req.query.stat1 = 'false') {
-        res.render('login', {existence_error : "No such user exists.", password_error: ""})
+    if(req.query.code == '1') {
+        res.render('login', {existence_error : "Invalid Username or Password or both."})
         return;
     }
 
-    if(req.query.stat2 == 'false') {
-        res.render('login', {existence_error : "", password_error: "Invalid Password."})
+    if(req.query.code == '2') {
+        res.render('login', {existence_error : "Registration not confirmed."})
+        return;
+    }
+
+    if(req.query.code == '3') {
+        res.render('login', {existence_error : "Malicious input received."})
         return;
     }
 
     res.render('login', {
-        existence_error: "",
-        password_error: ""
+        existence_error: ""
     })
 })
 
