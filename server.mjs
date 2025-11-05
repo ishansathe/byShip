@@ -240,7 +240,7 @@ app.get('/home', (req, res) => {
 app.get('/login', (req, res) => {
     console.log(req.query)
     if(req.query.code == '1') {
-        res.render('login', {existence_error : "Invalid Username, Password, Type or all."})
+        res.render('login', {existence_error : "Invalid Username, Password, User Type or all."})
         return;
     }
 
