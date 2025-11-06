@@ -5,10 +5,14 @@
         <link rel="stylesheet" href="register.css">
     </head>
     <body>
+        Separate accounts are needed for buyers and sellers.
         <form action="/await_confirm" method="post">
             <legend>Register.</legend>
-            <label for="name">Enter Name</label>
-            <input type="text" name="name" id="name" required>
+            <label for="fullname">Enter Full Name</label>
+            <input type="text" name="fullname" id="fullname" required>
+
+            <label for="username">Enter username</label>
+            <input type="text" name="username" id="username" required>
 
             <label for="email">Enter Email</label>
             <input type="email" name="email" id="email" required>

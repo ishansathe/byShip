@@ -73,34 +73,44 @@ app.post('/await_confirm', (req, res) => {
         if (err) {
             console.log(err);
         }
-        console.log(fields, files);
-
-        console.log(fields.name[0]);
-        
         // Stored it here because I will need it again later.
         // Taken from the crypto library!
         let reg_key = randomBytes(24).toString('hex');
-
-        connection.query(
-            "insert into user (name, email, number, password, user_type, confirmed, reg_key, reg_time) values" +
-                "('" +fields.name[0] + "', '"+
-                fields.email[0]+ "', '"+
-                fields.contact[0]+ "', '"+
-                fields.password[0]+ "', '"+
-                fields.user_type[0]+ "', "+
-                "0"+ ", '" +//By default, user is not confirmed till he confirms registration.
-                reg_key + "', '" +
-                Date.now() + "'" + // Date in UNIX timestamp.
-                ")"
-            , //query ends above and callback handler functions begin below.
-            (err, result) =>{
+        
+        connection.query("insert into user_acc (email, password, user_type) values" +
+            "('" + fields.email[0] + "', '" +
+            fields.password[0] + "', '" +
+            fields.user_type[0] + "');"
+            , (err, result, _) => {
                 if(err) {
-                    console.error(err);
+                    console.log(err);
                     return;
                 }
-                console.log("Results of query: ", result)
+
+                connection.query("insert into user_details (username, name, number, user_id) values" +
+                    "('" + fields.username[0] + "', '" +
+                    fields.fullname[0] + "', " +
+                    fields.contact[0] + ", "+ result.insertId + ");",
+                    (err, r, f) => {
+                        if(err){
+                            console.log(err);
+                            return;
+                        }
+                    }
+                )
+                connection.query("insert into user_reg (email, reg_key, link_sent_time, user_id) values " +
+                    "( '" + fields.email[0] + "', '" +
+                    reg_key + "', " +
+                    Date.now() + ", " + result.insertId + ");",
+                    (err, r, f) => {
+                        if(err) {
+                            console.log(err);
+                            return;
+                        }
+                    }
+                )
             }
-        );
+        )
 
         let mailOptions = {
             from: '"Byship Team" <byship-team@byship.in>',
@@ -111,7 +121,7 @@ app.post('/await_confirm', (req, res) => {
 
             After registration is confirmed, you will be redirected to the login page, where you have to login again.
             
-            Note, this link expires after two hours, after which you will have to log in again.`
+            Note, this link expires after two hours. If expired, go to link anyway to retrieve a new registration confirmation link.`
         }
 
         transport.sendMail(mailOptions, (err, infor) => {
@@ -131,38 +141,82 @@ app.post('/await_confirm', (req, res) => {
 })
 
 app.get('/confirmation', (req,res) => {
-    let url_key = req.query.reg_key
+    let reg_key = req.query.reg_key
     
     let reg_success = false;
     console.log(url_key);
-    connection.query('select reg_key, reg_time from user', 
-        (err, result) => {
-            if(err){
+    // connection.query('select reg_key, reg_time from user', 
+    //     (err, result) => {
+    //         if(err){
+    //             console.log(err);
+    //         }
+        
+    //         for (let i in result) {
+
+    //             if (result[i].reg_key == url_key) {
+    //                 console.log("Good stuff.")
+
+    //                 // If you have register within the timelimit. You are good to go!
+    //                 // 7200 = 2 hours (in seconds) = 7200000 (in milliseconds)
+    //                 if(result[i].reg_time > ( Date.now() - 7200000)) {
+    //                     console.log("Link is valid! Registration complete!");
+
+    //                     // I don't think a callback is needed for this one.
+    //                     connection.query(`update user set confirmed = 1 where reg_key = '${url_key}'`)
+    //                     res.redirect('/login');
+    //                 }
+    //                 // If you have registered too long ago, where timestamp is now lesser than two hour limit allows
+    //                 // You have to re-register.
+    //                 else {
+    //                     console.log("Link has now expired. You need to re-register.");
+    //                     res.redirect('/await_confirm?expired=true')
+    //                 }
+    //                 return;
+    //             }
+    //         }
+    //     }
+    // )
+
+    connection.query(`select user_id, email, link_sent_time from user_reg where reg_key = ${reg_key}`, 
+        (err, result, fields) => {
+            if(err) {
                 console.log(err);
             }
-        
-            for (let i in result) {
 
-                if (result[i].reg_key == url_key) {
-                    console.log("Good stuff.")
+            if(result.length == 0){
+                return;
+            }
 
-                    // If you have register within the timelimit. You are good to go!
-                    // 7200 = 2 hours (in seconds) = 7200000 (in milliseconds)
-                    if(result[i].reg_time > ( Date.now() - 7200000)) {
-                        console.log("Link is valid! Registration complete!");
+            if(result[0].link_sent_time + 7200000 > Date.now()) {
+                connection.query(`update user_acc set confirmed = 1 where user_id = ${result[0].user_id}`);
+            }
+            else {
+                let new_reg_key = randomBytes(24).toString('hex');
+                connection.query(`update user_reg set reg_key = '${new_reg_key}', ` + 
+                    `link_sent_time =` + Date.now() + `where user_id = ${result[0].user_id};`);
+                
+                let mailOptions = {
+                    from: '"Byship Team" <byship-team@byship.in>',
+                    to: `${result[0].email}`,
+                    subject: "Please confirm your registration.",
+                    // html: "Your registration URL is: <br>",
+                    text: `http://localhost:5194/confirmation?reg_key=${new_reg_key}
 
-                        // I don't think a callback is needed for this one.
-                        connection.query(`update user set confirmed = 1 where reg_key = '${url_key}'`)
-                        res.redirect('/login');
-                    }
-                    // If you have registered too long ago, where timestamp is now lesser than two hour limit allows
-                    // You have to re-register.
-                    else {
-                        console.log("Link has now expired. You need to re-register.");
-                        res.redirect('/register')
-                    }
-                    return;
+                    After registration is confirmed, you will be redirected to the login page, where you have to login again.
+                    
+                    Note, this link expires after two hours. If expired, go to link anyway to retrieve a new registration confirmation link.`
                 }
+
+                transport.sendMail(mailOptions, (err, infor) => {
+                    if(err){
+                        return console.error(err);
+                    }
+                    else 
+                    {
+                        console.log("Email Sent successfully.");
+                        console.log("Here is info: ", infor);
+                    }
+                })
             }
         }
     )
@@ -257,6 +311,11 @@ app.get('/login', (req, res) => {
     res.render('login', {
         existence_error: ""
     })
+})
+
+app.get('/home/:user', (req, res) => {
+    console.log(req.params);
+    res.send(fs.readFileSync('./src/sample.html','utf-8'));
 })
 
 app.listen(PORT, () => {
